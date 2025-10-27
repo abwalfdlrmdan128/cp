@@ -1,0 +1,61 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 2005;
+vector<int> Adj[N];
+int colored[N];
+bool flage = false;
+void BFS(int u, int c) {
+    queue<int> q;
+    colored[u] = c;
+    q.push(u);
+    while (!q.empty()) {
+        int v = q.front(); q.pop();
+        for (auto neighbor : Adj[v]) {
+            if (colored[neighbor] == -1) {
+                colored[neighbor] = 1 - colored[v];
+                q.push(neighbor);
+            } else if (colored[neighbor] == colored[v]) {
+                flage = true;
+                return;
+            }
+        }
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+
+    for (int cs = 1; cs <= t; cs++) {
+        int n, m;
+        cin >> n >> m;
+
+        for (int j = 1; j <= n; j++) {
+            Adj[j].clear();
+        }
+        fill(colored, colored + N, -1);
+        flage = false;
+        for (int e = 0; e < m; e++) {
+            int u, v;
+            cin >> u >> v;
+            Adj[u].push_back(v);
+            Adj[v].push_back(u);
+        }
+
+        for (int i = 1; i <= n && !flage; i++) {
+            if (colored[i] == -1) {
+                BFS(i, 0);
+            }
+        }
+
+        cout << "Scenario #" << cs << ":\n";
+        if (flage)
+            cout << "Suspicious bugs found!\n";
+        else
+            cout << "No suspicious bugs found!\n";
+    }
+    return 0;
+}
